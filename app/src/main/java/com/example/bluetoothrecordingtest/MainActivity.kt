@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
             override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                 if (profile == BluetoothProfile.HEADSET) {
                     bluetoothHeadset = proxy as BluetoothHeadset
-                    Log.d("scoTest", "bluetoothHeadset $bluetoothHeadset")
+//                    Log.d("WatchTest", "bluetoothHeadset $bluetoothHeadset")
                 }
             }
 
@@ -89,65 +89,25 @@ class MainActivity : AppCompatActivity() {
         audioManager = applicationContext.getSystemService(AUDIO_SERVICE) as AudioManager
 
         bluetoothAdapter.getProfileProxy(this, profileListener, BluetoothProfile.HEADSET)
-//
-//        val bluetoothAdapter = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothAdapter?
-//        bluetoothAdapter?.getProfileProxy(this, profileListener, BluetoothProfile.HEADSET)
 
-        val deviceName = "G17 Audio talk" // Replace with the name of the device you want to connect to
+        val deviceName = "DT AudioBE41" // Replace with the name of the device you want to connect to
         val devices = bluetoothAdapter.bondedDevices
         for (device in devices) {
 //                device.uuids
-            Log.d("scoTest ${device.name}", "MAC: ${device.address} ")
+            Log.d("WatchTest", "Available devices: ${device.name} ")
             if (device.name == deviceName) {
                 selectedDevice = device
-                Log.d("scoTest: ", selectedDevice.name )
-//                if (device.uuids.isNotEmpty()){
-//                    for (uu in selectedDevice.uuids){
-//                        Log.d("devices $selectedDevice", uu.toString())
-//                    }
-//
-//                }
-//                else{
-//                    Log.d("devices", "UUID Error")
-//                }
+                Log.d("WatchTest", "Connected device: "+selectedDevice.name )
                 break
             }
         }
 
-
-
-//        mediaRecorder = MediaRecorder()
-//        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT)
-//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-
         btnPlay.setOnClickListener {
-            val isSupports = isVoiceRecognitionSupported(selectedDevice)
-
-            Log.d("scoTest", "Is device supports: $isSupports")
-//            if (outputFile.toString().isNotEmpty()){
-//
-//                mediaPlayer = MediaPlayer()
-//                val afd = assets.openFd(outputFile.absolutePath)
-//                mediaPlayer.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
-//
-//                val audioAttributes = AudioAttributes.Builder()
-//                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-//                    .setUsage(AudioAttributes.USAGE_MEDIA)
-//                    .build()
-//                mediaPlayer.setAudioAttributes(audioAttributes)
-////                mediaPlayer.setDataSource(outputFile.absolutePath)
-//                mediaPlayer.prepare()
-//                mediaPlayer.start()
-//            } else{
-//                Toast.makeText(this, "No audio found", Toast.LENGTH_SHORT).show()
-//            }
+            Toast.makeText(this, "Not implemented", Toast.LENGTH_SHORT).show()
         }
 
-        Log.d("scoTest", intent?.action.toString())
-        if (intent?.categories != null){
-            Log.d("scoTest", intent?.categories.toString())
-        }
+        Log.d("WatchTest", intent?.action.toString())
+
 
         onNewIntent(intent)
     }
@@ -160,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkIntent(intent: Intent?) {
         if (intent != null) {
-            if (intent.action == "android.intent.action.VOICE_COMMAND" || intent.action == "android.intent.action.ASSIST") {
+            if (intent.action == "android.intent.action.VOICE_COMMAND") {
                 enableVoiceRecord()
             }
         }
@@ -174,60 +134,25 @@ class MainActivity : AppCompatActivity() {
         return bluetoothHeadset!!.isVoiceRecognitionSupported(device)
     }
 
-//    @RequiresApi(Build.VERSION_CODES.S)
-//    fun isBluetoothDeviceSupportsVoiceRecognition(device: BluetoothDevice): Boolean {
-//
-//        ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT)
-//        if (!bluetoothHeadset?.startVoiceRecognition(device)!!) {
-//            return false
-//        }
-//
-//        val supported = bluetoothHeadset!!.isVoiceRecognitionSupported(device)
-//
-//        if (!bluetoothHeadset!!.stopVoiceRecognition(device)) {
-//            Log.w("Bluetooth Headset", "Failed to stop voice recognition")
-//        }
-//
-//        return supported
-//    }
-
     private val mBluetoothScoReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.S)
         override fun onReceive(context: Context, intent: Intent) {
             val state = intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, -1)
-            Log.d("scoTest", "ANDROID Audio SCO state: $state")
-            Log.d("scoTest", "state: " + state + " isBluetoothScoOn: " +
-                    audioManager.isBluetoothScoOn + " isSpeakerphoneOn: " + audioManager.isSpeakerphoneOn
+            Log.d("WatchTest", "ANDROID Audio SCO state: $state")
+            Log.d("WatchTest", "state=" + state + " audioManager.isBluetoothScoOn=" +
+                    audioManager.isBluetoothScoOn + " audioManager.isSpeakerphoneOn=" + audioManager.isSpeakerphoneOn
             )
 
             if (AudioManager.SCO_AUDIO_STATE_CONNECTED == state) {
 
-
-
                 isRecording = true
                 time.setToNow()
+
+                Log.d("WatchTest", "Record start time: "+time.format("%H:%M:%S"))
 
                 val audioName = time.format("%Y%m%d%H%M%S") + ".pcm"
                 outputFile = File(pathToRecords, audioName)
                 audioRecorder.start(outputFile)
-//                mediaRecorder.setOutputFile(outputFile.absolutePath)
-//                if (device != null) {
-//                    if (device.audioProfiles.size>0){
-//                        for (i in device.audioProfiles){
-//                            Log.d("scoTest", "device audioprofiles: $i")
-//                        }
-//                    }
-//
-//                    if(::audioRecorder.isInitialized.not()) {
-//                        audioRecorder = CustomAudioRecorder(this@MainActivity)
-//                    }
-//                    audioRecorder.init()
-//
-//
-//                }else{
-//                    Log.d("scoTest", "preferred Device is Null")
-//                }
-
 
                 btnRecord.text = "Recording"
                 txtStatus.text = "Recorder status: Recording..."
@@ -236,8 +161,9 @@ class MainActivity : AppCompatActivity() {
             } else if (AudioManager.SCO_AUDIO_STATE_DISCONNECTED == state) {
                 if (isRecording) {
                     disableVoiceRecord()
-
                     isRecording = false
+                    time.setToNow()
+                    Log.d("WatchTest", "Record end time: "+time.format("%H:%M:%S"))
                 }
             }
 
@@ -252,8 +178,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(mBluetoothScoReceiver, intentFilter)
 
         // Start Bluetooth SCO.
-
-        Log.d("scoTest", "isBluetoothScoAvailableOffCall "+ (audioManager.isBluetoothScoAvailableOffCall).toString())
+        Log.d("WatchTest", "Connected, enable SCO connection")
 
         audioManager.mode = AudioManager.MODE_NORMAL
         audioManager.isBluetoothScoOn = true
@@ -265,32 +190,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun disableVoiceRecord() {
-//        if (isRecording) {
-//            buttonStopRecording.setEnabled(false)
-//            buttonPlayLastRecordAudio.setEnabled(true)
-//            buttonStartRecording.setEnabled(true)
-//            buttonStopPlayingRecording.setEnabled(false)
-//            // Stop Media recorder
-//            speechRecognizer.stopListening()
-//        }
         try {
             unregisterReceiver(mBluetoothScoReceiver)
         } catch (e: Exception) {
         }
         audioRecorder.stop()
-//        mediaRecorder.stop()
-//        mediaRecorder.release()
         btnRecord.text = "Start"
         txtStatus.text = "Recorder status: Not Recording"
         isRecording = false
 
-        Log.d("scoTest", "Disconnected, disable sco")
+        Log.d("WatchTest", "Disconnected, disable SCO connection")
         // Stop Bluetooth SCO.
         audioManager.stopBluetoothSco()
         audioManager.mode = AudioManager.MODE_NORMAL
         audioManager.isBluetoothScoOn = false
-        Log.d("scoTest", "isBluetoothScoAvailableOffCall "+ (audioManager.isBluetoothScoAvailableOffCall).toString())
+//        Log.d("WatchTest", "isBluetoothScoAvailableOffCall "+ (audioManager.isBluetoothScoAvailableOffCall).toString())
         // Start Speaker.
         audioManager.isSpeakerphoneOn = true
+
     }
 }

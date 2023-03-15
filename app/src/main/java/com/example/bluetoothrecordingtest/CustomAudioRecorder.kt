@@ -35,20 +35,7 @@ class CustomAudioRecorder {
         ActivityCompat.checkSelfPermission(ctx, Manifest.permission.RECORD_AUDIO)
         audioRecord = AudioRecord(audioSource, sampleRate, channelConfig, audioFormat, bufferSize())
     }
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    fun startRecording(outputFile: File) {
-//
-//        recorder.setAudioSource(MediaRecorder.AudioSource.MIC)
-//        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-//        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-//        recorder.setOutputFile(outputFile)
-//        recorder.prepare()
-//        recorder.start()
-//    }
-//    fun stopRecording() {
-//        recorder.stop()
-//        recorder.release()
-//    }
+
 
     fun start(outputFile: File) {
 
@@ -58,7 +45,7 @@ class CustomAudioRecorder {
         audioRecord = AudioRecord(audioSource, sampleRate, channelConfig, audioFormat, bufferSize())
 //        audioRecord?.preferredDevice = preferredDevice
         audioRecord?.startRecording()
-        Log.d("scoTest ", "AudioRecorder file path $outputFile")
+        Log.d("WatchTest ", "AudioRecorder file path $outputFile")
 
         isRecording = true
         Thread(Runnable {
